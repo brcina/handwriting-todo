@@ -4,9 +4,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Projektidee
 
-Diese Anwendung wandelt handschriftlich notierte To-Do-Listen, die mit dem Smartphone fotografiert werden, automatisch in strukturiertes **Markdown** um.
+Diese Anwendung wandelt handschriftlich notierte To-Do-Listen, die mit dem Smartphone fotografiert werden, automatisch
+in strukturiertes **Markdown** um.
 
-Die Anwendung verwendet ein lokal laufendes KI-Modell über **Ollama** (`llama3.2-vision:11b`), um Handschrift zu erkennen und in Text zu konvertieren. Durch ein **bildbasiertes Feedback-System** lernt die Anwendung schrittweise, die individuelle Handschrift besser zu erkennen.
+Die Anwendung verwendet ein lokal laufendes KI-Modell über **Ollama** (`llama3.2-vision:11b`), um Handschrift zu
+erkennen und in Text zu konvertieren. Durch ein **bildbasiertes Feedback-System** lernt die Anwendung schrittweise, die
+individuelle Handschrift besser zu erkennen.
 
 ## Workflow
 
@@ -21,15 +24,19 @@ Die Anwendung verwendet ein lokal laufendes KI-Modell über **Ollama** (`llama3.
 
 ## Ziel
 
-Das Ziel der Anwendung ist es, handschriftliche Notizen schnell und effizient in ein digitales, strukturiertes Format zu überführen, das sich leicht weiterverarbeiten oder in Dokumentationen und Aufgabenlisten integrieren lässt. Durch das iterative Feedback-System verbessert sich die Erkennungsqualität mit jeder Korrektur automatisch.
+Das Ziel der Anwendung ist es, handschriftliche Notizen schnell und effizient in ein digitales, strukturiertes Format zu
+überführen, das sich leicht weiterverarbeiten oder in Dokumentationen und Aufgabenlisten integrieren lässt. Durch das
+iterative Feedback-System verbessert sich die Erkennungsqualität mit jeder Korrektur automatisch.
 
 ## Project Structure
 
 This is a Gradle-based multi-project build containing:
+
 - **handwriting-todo-fe**: Angular 21 frontend with Tailwind CSS v4, using Vitest for testing
 - **handwriting-todo-be**: Spring Boot 4.0.3 backend (Java)
 
-The build is coordinated at the root level with dependencies between frontend and backend (backend compilation depends on frontend build artifacts being copied).
+The build is coordinated at the root level with dependencies between frontend and backend (backend compilation depends
+on frontend build artifacts being copied).
 
 ## KI-Integration
 
@@ -76,6 +83,7 @@ Erkenne nun den Text im neuen Bild...
 Das Modell sieht echte Beispiele der Handschrift – deutlich effektiver als reine Text-Hints.
 
 ### Weitere Maßnahmen
+
 - **Persönliches Vokabular**: Häufig verwendete Begriffe können dem Prompt vorab mitgegeben werden
 - **Token-Limit beachten**: Maximale Anzahl Few-Shot-Beispiele im Prompt begrenzen
 - **Korrekturen gewichten**: Seltene oder einmalige Korrekturen können herausgefiltert werden
@@ -85,12 +93,14 @@ Das Modell sieht echte Beispiele der Handschrift – deutlich effektiver als rei
 The frontend uses Angular 21 with standalone components and signals.
 
 ### Frontend Features
+
 - Hochladen von Fotos mit handschriftlichen Notizen
 - Anzeige des generierten Markdown
 - Möglichkeit zur manuellen Korrektur des Ergebnisses
 - Verwaltung gespeicherter Handschrift-Beispiele (Few-Shot-Bibliothek)
 
 ### Commands
+
 ```bash
 # Navigate to frontend directory first
 cd handwriting-todo-fe
@@ -115,6 +125,7 @@ npm run watch
 ```
 
 ### Architecture Notes
+
 - Uses Angular standalone components (no NgModules)
 - Routing configured in `src/app/app.routes.ts`
 - Application config in `src/app/app.config.ts` with `provideBrowserGlobalErrorListeners()`
@@ -127,12 +138,14 @@ npm run watch
 The backend is a Spring Boot application.
 
 ### Backend Responsibilities
+
 - Verarbeitung der hochgeladenen Bilder
 - Zuschneiden von Bildausschnitten für die Few-Shot-Bibliothek
 - Kommunikation mit dem KI-Modell via Ollama
 - Umwandlung des erkannten Textes in Markdown
 
 ### Commands
+
 ```bash
 # Build backend (depends on frontend build)
 ./gradlew :handwriting-todo-be:build
@@ -145,6 +158,7 @@ The backend is a Spring Boot application.
 ```
 
 ### Architecture Notes
+
 - Spring Boot 4.0.3 with Spring dependency management
 - Backend compilation depends on frontend artifacts via `compileJava.dependsOn project(':frontend').tasks.copyToBackend`
 - Backend currently has minimal source files (appears to be early in development)
@@ -153,9 +167,15 @@ The backend is a Spring Boot application.
 
 ## Build System
 
+
 This project uses Gradle 9.4.0 with a multi-project setup.
 
 ### Commands
+
+#### Build
+
+Commands to build the Project
+
 ```bash
 # Build entire project (backend + frontend)
 ./gradlew build
@@ -171,7 +191,36 @@ This project uses Gradle 9.4.0 with a multi-project setup.
 ./gradlew :handwriting-todo-be:build
 ```
 
+#### Ollama
+
+```bash
+# Start ollama
+ollama serve
+# Start ollama with debug output
+OLLAMA_DEBUG=1 ollama serve
+# Pull the image 
+ollama pull llama3.2-vision:11b
+# Run the image
+ollama run llama3.2-vision:11b
+# Test it
+curl http://localhost:11434/api/chat -d "{
+  \"model\": \"llama3.2-vision:11b\",
+  \"messages\": [
+    {
+      \"role\": \"user\",
+      \"content\": \"what is in this image?\",
+      \"images\": [\"$(base64 -w 0 abc-test.jpg)\"]
+    }
+  ]
+}"
+ollama stop llama3.2-vision:11b
+# Stop ollama
+systemctl stop ollama
+```
+
+
 ### Project Configuration
+
 - Root project name: `handwriting-todo`
 - Group: `com.iso`
 - Version: `1.0.0`
