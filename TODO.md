@@ -5,6 +5,7 @@ TODOs
 - [ ] Rest Controller und Angular GUI Komponenten um diese mit dem GUI zu testen   
 - [ ] Mache eine Handschrift Text Service Implementation
 - [ ] Rest Controller und Angular GUI um eine Handschrift Datei hochzuladen und den Text anzuzeigen
+- [ ] Auch ein api subfolder adden mit open ap und das frontend und backend benutzen 
 
 ## Erledigt
 - [x] Projekt in docker-compose setup umwandeln
