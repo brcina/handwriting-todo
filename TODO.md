@@ -7,6 +7,7 @@ TODOs
 - [ ] Rest Controller und Angular GUI um eine Handschrift Datei hochzuladen und den Text anzuzeigen
 
 ## Erledigt
+- [x] Projekt in docker-compose setup umwandeln
 - [x] Text und Bild Service implementation erstellen
 - [x] Ollama soweit zum Laufen kriegen, das ich es mit einem Service Implementation ansprechen kann
 - [x] Das Projekt nach git einchecken

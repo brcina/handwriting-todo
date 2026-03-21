@@ -1,0 +1,19 @@
+services:
+  handwriting-todo-fe:
+    build:
+      context: ./handwriting-todo-fe
+    ports:
+      - "80:80"
+    depends_on:
+      - handwriting-todo-be
+
+  handwriting-todo-be:
+    build:
+      context: .
+      dockerfile: handwriting-todo-be/Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      # Lokale Instanz: http://host.docker.internal:11434
+      # Service Provider z.B.: https://api.example.com
+      SPRING_AI_OLLAMA_BASE_URL: ${OLLAMA_BASE_URL:-http://host.docker.internal:11434}
