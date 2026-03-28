@@ -6,7 +6,6 @@ build
 
 # Ignore Kotlin plugin data
 .kotlin
-/Worklog.md
 /.idea/
 handwriting-todo-be/src/main/resources/static/*
 !handwriting-todo-be/src/main/resources/static/.gitkeep
