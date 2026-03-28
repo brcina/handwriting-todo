@@ -2,6 +2,7 @@ TODOs
 =====
 
 ## Current 
+- [ ] verbessere error handling im api tester z.B. für ollama läuft nicht
 - [ ] nutze auch vast.ai und mache es konfigurierbar beim entwickeln, automatisch startbar beim entwicklen
 - [ ] Mache eine Handschrift TODOs to Markdown Service Implementation
 - [ ] Rest Controller und Angular GUI um eine Handschrift Datei hochzuladen und den Text als Markdown anzuzeigen
