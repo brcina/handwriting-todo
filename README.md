@@ -84,10 +84,12 @@ OLLAMA_BASE_URL=https://api.example.com
 
 Alle Backend-Endpunkte sind unter `/api` erreichbar:
 
-| Endpunkt           | Beschreibung                    |
-|--------------------|---------------------------------|
-| `GET /api/ai/ask`        | Einzelne Antwort          |
-| `GET /api/ai/askStream`  | Streaming-Antwort (Flux)  |
+| Endpunkt                             | Methode | Content-Type          | Beschreibung                                                |
+|--------------------------------------|---------|-----------------------|-------------------------------------------------------------|
+| `GET /api/ai/ask`                    | GET     | —                     | Einzelne Textantwort (`?message=...`)                       |
+| `GET /api/ai/askStream`              | GET     | —                     | Streaming-Textantwort (Flux, `?message=...`)                |
+| `POST /api/ai/askAboutPicture`       | POST    | `multipart/form-data` | Einzelne Antwort zu einem Bild (`message`, `file`)          |
+| `POST /api/ai/askAboutPictureStream` | POST    | `multipart/form-data` | Streaming-Antwort zu einem Bild (NDJSON, `message`, `file`) |
 
 ## Gradle Commands (Backend)
 
@@ -95,4 +97,14 @@ Alle Backend-Endpunkte sind unter `/api` erreichbar:
 cd handwriting-todo-be
 ./gradlew build
 ./gradlew test
+```
+
+## NPM Commands (Frontend)
+
+```bash
+cd handwriting-todo-fe
+npm install
+npm start
+npm run build
+npm test
 ```

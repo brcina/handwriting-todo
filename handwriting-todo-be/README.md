@@ -59,10 +59,12 @@ Die Ollama-URL ist über die Umgebungsvariable `SPRING_AI_OLLAMA_BASE_URL` konfi
 
 Alle Endpunkte sind unter `/api` erreichbar:
 
-| Endpunkt              | Beschreibung                   |
-|-----------------------|--------------------------------|
-| `GET /api/ai/ask`        | Einzelne Antwort            |
-| `GET /api/ai/askStream`  | Streaming-Antwort (Flux)    |
+| Endpunkt                             | Methode | Content-Type          | Beschreibung                                                 |
+|--------------------------------------|---------|-----------------------|--------------------------------------------------------------|
+| `GET /api/ai/ask`                    | GET     | —                     | Einzelne Textantwort (`?message=...`)                        |
+| `GET /api/ai/askStream`              | GET     | —                     | Streaming-Textantwort (Flux, `?message=...`)                 |
+| `POST /api/ai/askAboutPicture`       | POST    | `multipart/form-data` | Einzelne Antwort zu einem Bild (`message`, `file`)           |
+| `POST /api/ai/askAboutPictureStream` | POST    | `multipart/form-data` | Streaming-Antwort zu einem Bild (NDJSON, `message`, `file`) |
 
 ## Docker
 

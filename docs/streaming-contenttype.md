@@ -45,6 +45,7 @@ source.onmessage = e => {
 POST mit Datei-Upload braucht einen Body — `EventSource` (GET only) fällt weg.
 
 **Backend** (`produces` muss explizit gesetzt werden):
+<!-- noinspection ALL -->    
 ```java
 @PostMapping(value = "/ai/askAboutPictureStream", produces = MediaType.APPLICATION_NDJSON_VALUE)
 ```

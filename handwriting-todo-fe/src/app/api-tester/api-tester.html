@@ -1,0 +1,68 @@
+@if (isDev) {
+  <div class="border-2 border-dashed border-orange-400 p-4 m-4 rounded-lg">
+    <h3 class="text-lg font-bold mb-3">🛠 API Tester (Dev only)</h3>
+
+    <!-- Endpoint Auswahl -->
+    <div class="mb-3">
+      <label class="block text-sm mb-1">Endpoint</label>
+      <select [(ngModel)]="selected" class="border rounded p-1 w-full">
+        @for (e of endpoints; track e.url) {
+          <option [ngValue]="e">{{ e.method }} {{ e.label }}</option>
+        }
+      </select>
+    </div>
+
+    <!-- Message Input -->
+    <div class="mb-3">
+      <label class="block text-sm mb-1">Message</label>
+      <textarea [(ngModel)]="message" rows="3"
+                class="border rounded p-1 w-full font-mono text-sm">
+    </textarea>
+    </div>
+
+    <!-- File Upload -->
+    @if (selected.fileRequired) {
+      <div class="mb-3">
+        <label class="block text-sm mb-1">Bild</label>
+        <input type="file" accept="image/*" (change)="onFileChange($event)"/>
+        @if (selectedFile) {
+          <span class="text-xs text-green-600 ml-2">
+      ✅ {{ selectedFile.name }}
+
+    </span>
+        }
+      </div>
+    }
+
+
+    <!-- Buttons -->
+    <div class="flex gap-2 mb-3">
+      <button (click)="send()" [disabled]="streaming()"
+              class="bg-blue-600 text-white px-4 py-1 rounded disabled:opacity-50">
+        {{ selected.stream ? '▶ Start Stream' : 'Send' }}
+      </button>
+      @if (streaming()) {
+        <button (click)="stopStream()"
+                class="bg-red-600 text-white px-4 py-1 rounded">
+          ⏹ Stop
+        </button>
+        <span class="text-orange-400 self-center animate-pulse">
+          ● live
+          </span>
+      }
+    </div>
+
+    <!-- Timer -->
+    @if (elapsedMs() !== null) {
+      <div class="text-xs text-gray-400 mb-1">
+        {{ elapsedMs() }} ms
+      </div>
+    }
+
+    <!-- Response -->
+    <pre class="bg-gray-900 text-green-400 p-3 rounded text-sm min-h-24 whitespace-pre-wrap">{{
+        response() || '...'
+      }}</pre>
+  </div>
+}
+
