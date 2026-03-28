@@ -10,14 +10,13 @@ Die Anwendung verwendet ein KI-Modell über **Ollama** (`llama3.2-vision:11b`), 
 
 ```
 handwriting-todo/
-├── frontend/          # Angular 21 + Tailwind CSS
-├── backend/           # Spring Boot 3.4.3 (Java 21)
+├── handwriting-todo-fe/   # Angular 21 + Tailwind CSS
+├── handwriting-todo-be/   # Spring Boot 3.4.3 (Java 21)
 ├── docs/
-├── docker-compose.yml
-└── build.gradle
+└── docker-compose.yml
 ```
 
-### Frontend (`frontend/`)
+### Frontend (`handwriting-todo-fe/`)
 
 Implementiert mit **Angular 21** (Standalone Components, Signals):
 - Hochladen von Fotos mit handschriftlichen Notizen
@@ -25,7 +24,7 @@ Implementiert mit **Angular 21** (Standalone Components, Signals):
 - Möglichkeit zur manuellen Korrektur des Ergebnisses
 - Verwaltung gespeicherter Handschrift-Beispiele (Few-Shot-Bibliothek)
 
-### Backend (`backend/`)
+### Backend (`handwriting-todo-be/`)
 
 Implementiert mit **Spring Boot 3.4.3**:
 - Verarbeitung der hochgeladenen Bilder
@@ -62,10 +61,10 @@ Frontend und Backend werden unabhängig gestartet:
 
 ```bash
 # Frontend (http://localhost:4200)
-cd frontend && npm start
+cd handwriting-todo-fe && npm start
 
 # Backend (http://localhost:8080/api)
-./gradlew :backend:bootRun
+cd handwriting-todo-be && ./gradlew bootRun
 ```
 
 Das Angular Dev-Server proxied `/api/*` automatisch zum Backend.
