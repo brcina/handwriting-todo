@@ -2,9 +2,14 @@ TODOs
 =====
 
 ## Current 
-- [ ] Mache eine Handschrift Text Service Implementation
-- [ ] Rest Controller und Angular GUI um eine Handschrift Datei hochzuladen und den Text anzuzeigen
-- [ ] Auch ein api subfolder adden mit open ap und das frontend und backend benutzen 
+- [ ] nutze auch vast.ai und mache es konfigurierbar beim entwickeln, automatisch startbar beim entwicklen
+- [ ] Mache eine Handschrift TODOs to Markdown Service Implementation
+- [ ] Rest Controller und Angular GUI um eine Handschrift Datei hochzuladen und den Text als Markdown anzuzeigen
+- [ ] Performance implementiere optimierungen wie Bild Downscaling im FE
+- [ ] Performance implementiere Bild-Preprocessing (Kontrast + Binarisierung) im Backend bevor den call an Ollama
+- [ ] Implementiere Correction Loop verbessertes Markdown
+- [ ] Update die Handschriften GUI Komponente um das Markdown zu verbessern
+- [ ] Implementiere ollama vorwärmen beim start 
 
 ## Erledigt
 - [x] Rest Controller und Angular GUI Komponenten um diese mit dem GUI zu testen
