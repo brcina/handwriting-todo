@@ -73,3 +73,29 @@ docker build -t handwriting-todo-be .
 ```
 
 Wird normalerweise über `docker compose up --build` im Root gestartet (Backend auf `http://localhost:8080`).
+
+
+## Prompt
+
+```text
+Extract all text from this handwritten note.
+Return only a markdown checklist, no explanation. The handwritten note is in german.
+Format: - [ ] Task
+```
+
+## Image Optimization
+
+
+```bash
+## Reduce size
+convert todo-290326.jpg -auto-orient -resize 1500x1500 -quality 80 todo-290326-opt.jpg
+## Optimize contrast and grey scaling 
+convert todo-290326.jpg \
+  -auto-orient \
+  -colorspace Gray \
+  -normalize \
+  -threshold 50% \
+  todo-290326-bw.jpg
+```
+
+> Image Magic needs to be installed on the system
