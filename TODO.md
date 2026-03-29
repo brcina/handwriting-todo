@@ -5,6 +5,7 @@ TODOs
 - [ ] Verbessere Error Handling im Api Tester z.B. für ollama läuft nicht
 - [ ] Verbessere bei Stream das Stop Stream für einen echten Abbruch sorgt, jetzt geht in einen Endlos Loop
 - [ ] nutze auch vast.ai und mache es konfigurierbar beim entwickeln, automatisch startbar beim entwicklen
+- [ ] Installiere verschieden ollama modells für handschrift und mache sie im api-tester auswählbar, Rest endpoint etc. 
 - [ ] Mache eine Handschrift TODOs to Markdown Service Implementation
 - [ ] Rest Controller und Angular GUI um eine Handschrift Datei hochzuladen und den Text als Markdown anzuzeigen
 - [ ] Performance implementiere optimierungen wie Bild Downscaling im FE
