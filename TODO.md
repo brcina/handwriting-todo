@@ -2,7 +2,6 @@ TODOs
 =====
 
 ## Current 
-- [ ] Verbessere bei Stream das Stop Stream für einen echten Abbruch sorgt, jetzt geht in einen Endlos Loop
 - [ ] nutze auch vast.ai und mache es konfigurierbar beim entwickeln, automatisch startbar beim entwicklen
 - [ ] Installiere verschieden ollama modells für handschrift und mache sie im api-tester auswählbar, Rest endpoint etc.
 - [ ] Installiere eine Autokorrektur Modell und lasse nach der Extraktion über den Text laufen
@@ -16,6 +15,7 @@ TODOs
 - [ ] Implementiere ollama vorwärmen beim start 
 
 ## Erledigt
+- [x] Verbessere bei Stream das Stop Stream für einen echten Abbruch sorgt, jetzt geht in einen Endlos Loop
 - [x] Verbessere Error Handling im Api Tester z.B. für ollama läuft nicht
 - [x] Rest Controller und Angular GUI Komponenten um diese mit dem GUI zu testen
 - [x] Projekt in docker-compose setup umwandeln
