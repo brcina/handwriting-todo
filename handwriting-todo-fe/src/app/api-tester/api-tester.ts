@@ -23,7 +23,7 @@ export class ApiTesterComponent {
   elapsedMs = signal<number | null>(null);
   selectedFile: File | null = null;
   message = 'Tell me a joke';
-  private eventSource: EventSource | null = null;
+  private abortController: AbortController | null = null;
   private timerStart = 0;
   private timerInterval: ReturnType<typeof setInterval> | null = null;
 
@@ -100,6 +100,10 @@ export class ApiTesterComponent {
 
   private startStream() {
     this.streaming.set(true);
+    this.abortController = new AbortController();
+    const signal = this.abortController.signal;
+
+    let fetchPromise: Promise<Response>;
 
     if (this.selected.fileRequired) {
       if (!this.selectedFile) {
@@ -111,60 +115,54 @@ export class ApiTesterComponent {
       const form = new FormData();
       form.append('message', this.message);
       form.append('file', this.selectedFile);
-
-      fetch(this.selected.url, { method: 'POST', body: form })
-        .then(async res => {
-          if (!res.ok) {
-            const err = await res.json().catch(() => ({ error: res.statusText }));
-            this.response.set(`Error ${res.status}: ${err.error ?? res.statusText}`);
-            this.streaming.set(false);
-            this.stopTimer();
-            return;
-          }
-          const reader = res.body!.getReader();
-          const decoder = new TextDecoder();
-          let buffer = '';
-          const read = () => reader.read().then(({ done, value }) => {
-            if (done) { this.streaming.set(false); this.stopTimer(); return; }
-            buffer += decoder.decode(value, { stream: true });
-            const lines = buffer.split('\n');
-            buffer = lines.pop() ?? '';
-            for (const line of lines) {
-              if (!line.trim()) continue;
-              try {
-                const chunk = JSON.parse(line);
-                this.response.update(r => r + chunk.answer);
-              } catch {
-                this.response.update(r => r + line);
-              }
-            }
-            read();
-          });
-          read();
-        })
-        .catch(e => {
-          this.response.set(`Error: ${e.message}`);
-          this.streaming.set(false);
-          this.stopTimer();
-        });
+      fetchPromise = fetch(this.selected.url, { method: 'POST', body: form, signal });
     } else {
       const url = `${this.selected.url}?message=${encodeURIComponent(this.message)}`;
-      this.eventSource = new EventSource(url);
-      this.eventSource.onmessage = e => {
-        try {
-          const chunk = JSON.parse(e.data);
-          this.response.update(r => r + chunk.answer);
-        } catch {
-          this.response.update(r => r + e.data);
-        }
-      };
-      this.eventSource.onerror = () => { this.stopStream(); this.stopTimer(); };
+      fetchPromise = fetch(url, { signal });
     }
+
+    fetchPromise
+      .then(async res => {
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({ error: res.statusText }));
+          this.response.set(`Error ${res.status}: ${err.error ?? res.statusText}`);
+          this.streaming.set(false);
+          this.stopTimer();
+          return;
+        }
+        const reader = res.body!.getReader();
+        const decoder = new TextDecoder();
+        let buffer = '';
+        const read = () => reader.read().then(({ done, value }) => {
+          if (done) { this.streaming.set(false); this.stopTimer(); return; }
+          buffer += decoder.decode(value, { stream: true });
+          const lines = buffer.split('\n');
+          buffer = lines.pop() ?? '';
+          for (const line of lines) {
+            if (!line.trim()) continue;
+            try {
+              const chunk = JSON.parse(line);
+              this.response.update(r => r + chunk.answer);
+            } catch {
+              this.response.update(r => r + line);
+            }
+          }
+          read();
+        });
+        read();
+      })
+      .catch(e => {
+        if (e.name === 'AbortError') return;
+        this.response.set(`Error: ${e.message}`);
+        this.streaming.set(false);
+        this.stopTimer();
+      });
   }
 
   stopStream() {
-    this.eventSource?.close();
-    this.eventSource = null;
+    this.abortController?.abort();
+    this.abortController = null;
     this.streaming.set(false);
+    this.stopTimer();
   }
 }

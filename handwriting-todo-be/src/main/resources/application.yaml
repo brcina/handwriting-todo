@@ -1,8 +1,6 @@
-server:
-  servlet:
-    context-path: /api
-
 spring:
+  webflux:
+    base-path: /api
   application:
     name: handwriting-todo-be
   ai:
