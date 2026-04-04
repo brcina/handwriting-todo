@@ -78,24 +78,18 @@ Wird normalerweise über `docker compose up --build` im Root gestartet (Backend 
 ## Prompt
 
 ```text
-Extract all text from this handwritten note.
-Return only a markdown checklist, no explanation. The handwritten note is in german.
-Format: - [ ] Task
+Das Bild zeigt eine handgeschriebene deutsche To-Do-Liste. 
+Jeder Eintrag beginnt mit einem Bindestrich (-). 
+Ignoriere durchgestrichene Wörter. Falls ein Wort unleserlich ist, schreibe [?] dahinter — erfinde keine Wörter. 
+Antworte NUR mit der Markdown-Liste im Format: - [ ] Aufgabe
 ```
 
 ## Image Optimization
 
 
 ```bash
-## Reduce size
-convert todo-290326.jpg -auto-orient -resize 1500x1500 -quality 80 todo-290326-opt.jpg
-## Optimize contrast and grey scaling 
-convert todo-290326.jpg \
-  -auto-orient \
-  -colorspace Gray \
-  -normalize \
-  -threshold 50% \
-  todo-290326-bw.jpg
+## Reduce size, optimize contrast and grey scaling 
+convert todo-290326.jpg -auto-orient -colorspace Gray -resize 1500x1500 -normalize -quality 80 -threshold 50% todo-290326-optimized.jpg
 ```
 
 > Image Magic needs to be installed on the system
