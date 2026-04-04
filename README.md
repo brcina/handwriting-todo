@@ -31,6 +31,10 @@ Das Frontend proxied `/api/*` automatisch zum Backend auf `:8080`.
 
 ### Ollama
 
+Die Ollama-URL ist über die Umgebungsvariable `SPRING_AI_OLLAMA_BASE_URL` konfigurierbar (Standard: `http://localhost:11434`).
+
+#### Ollama lokal
+
 ```bash
 # Starten
 ollama serve
@@ -60,7 +64,38 @@ ollama stop llama3.2-vision:11b
 systemctl stop ollama
 ```
 
-Die Ollama-URL ist über die Umgebungsvariable `SPRING_AI_OLLAMA_BASE_URL` konfigurierbar (Standard: `http://localhost:11434`).
+#### Ollama vast.ai
+
+```bash
+# Starten
+# TODO:  vast.ai instance mit cli starten 
+# Mit Debug-Output
+# TODO:  vast.ai instance debug output setzen
+# Modell laden
+# TODO:  vast.ai model laden
+# Modell ausführen
+# TODO:  vast.ai model runnen
+
+# Testen
+source ./vast-config.env
+curl -H "Authorization: Bearer $VAST_TOKEN" \
+     -d "{
+  \"model\": \"llama3.2-vision:11b\",
+  \"messages\": [
+    {
+      \"role\": \"user\",
+      \"content\": \"what is in this image?\",
+      \"images\": [\"$(base64 -w 0 ../abc-test.jpg)\"]
+    }
+  ]
+}" \
+$VAST_HOST/api/chat
+
+# Stoppen
+ollama stop llama3.2-vision:11b
+systemctl stop ollama
+```
+
 
 ## Produktion (Docker Compose)
 

@@ -3,6 +3,7 @@ TODOs
 
 ## Current 
 - [ ] nutze auch vast.ai und mache es konfigurierbar beim entwickeln, automatisch startbar beim entwicklen
+- [ ] mache einen system prompt im ui access able und mappe die entsprechenden rest methoden 
 - [ ] Installiere verschieden ollama modells für handschrift und mache sie im api-tester auswählbar, Rest endpoint etc.
 - [ ] Installiere eine Autokorrektur Modell und lasse nach der Extraktion über den Text laufen
 - [ ] Mache eine Handschrift TODOs to Markdown Service Implementation

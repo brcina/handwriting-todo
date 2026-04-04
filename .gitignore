@@ -10,3 +10,5 @@ build
 handwriting-todo-be/src/main/resources/static/*
 !handwriting-todo-be/src/main/resources/static/.gitkeep
 /handwriting-todo-be/.idea/
+/vast-config.env
+/handwriting-todo-be/vastai.env
