@@ -6,6 +6,12 @@ spring:
   application:
     name: handwriting-todo-be
   ai:
+    retry:
+      max-attempts: 1
+      backoff:
+        initial-interval: 1000
+        multiplier: 2
+        max-interval: 2000
     ollama:
       base-url: "${SPRING_AI_OLLAMA_BASE_URL:http://localhost:11434}"
       chat:

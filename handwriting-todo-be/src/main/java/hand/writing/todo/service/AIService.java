@@ -19,6 +19,7 @@ public class AIService {
     private final OllamaChatModel chatModel;
 
     public String ask(String question) {
+
         return chatModel.call(question);
     }
 
