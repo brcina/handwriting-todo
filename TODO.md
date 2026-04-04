@@ -10,6 +10,7 @@ TODOs
 - [ ] Rest Controller und Angular GUI um eine Handschrift Datei hochzuladen und den Text als Markdown anzuzeigen
 - [ ] Performance implementiere optimierungen wie Bild Downscaling im FE
 - [ ] Performance implementiere Bild-Preprocessing (Kontrast + Binarisierung) im Backend bevor den call an Ollama
+- [ ] Steige auf r2dbc um, um echt reaktiv zu sein
 - [ ] Implementiere Correction Loop verbessertes Markdown
 - [ ] Update die Handschriften GUI Komponente um das Markdown zu verbessern
 - [ ] Implementiere ollama vorwärmen beim start 
