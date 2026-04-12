@@ -23,8 +23,9 @@ class AIServiceTest {
     @Test
     void ask() {
         //when
+        var system = "You are a stand up comedian";
         var question = "Tell me a joke about a penguin";
-        var response = aiService.ask(question);
+        var response = aiService.ask(system, question);
         //then
         log.info(response);
         assertThat(response).contains("penguin");
@@ -33,8 +34,9 @@ class AIServiceTest {
     @Test
     void askStream() {
         //when
+        var system = "You are a stand up comedian";
         var question = "Tell me a joke about a penguin";
-        var chunks = aiService.askStream(question).collectList().block();
+        var chunks = aiService.askStream(system, question).collectList().block();
         //then
         assertThat(chunks).isNotEmpty();
         var fullText = chunks.stream()
@@ -50,10 +52,10 @@ class AIServiceTest {
         var imageData = new ClassPathResource("/abc-test.jpg");
         var media = new Media(MimeTypeUtils.IMAGE_JPEG, imageData);
         // when
+        var system = "You are picture analyzer";
         var question = "Explain what do you see in this picture?";
-        var response = aiService.askAboutPicture(question, media);
+        String text = aiService.ask(system, question, media);
         // then
-        String text = response.getResult().getOutput().getText();
         log.info(text);
         assertThat(text).contains("alphabet");
     }
@@ -64,8 +66,9 @@ class AIServiceTest {
         var imageData = new ClassPathResource("/abc-test.jpg");
         var media = new Media(MimeTypeUtils.IMAGE_JPEG, imageData);
         // when
+        var system = "You are picture analyzer";
         var question = "Explain what do you see in this picture? Are you seeing an alphabet ?";
-        var chunks = aiService.askAboutPictureStream(question, media).collectList().block();
+        var chunks = aiService.askStream(system, question, media).collectList().block();
         // then
         assertThat(chunks).isNotEmpty();
         var text = chunks.stream()

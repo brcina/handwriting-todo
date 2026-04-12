@@ -1,9 +1,7 @@
 TODOs
 =====
 
-## Current 
-- [ ] nutze auch vast.ai und mache es konfigurierbar beim entwickeln, automatisch startbar beim entwicklen
-- [ ] Installiere verschieden ollama modells für handschrift und mache sie im api-tester auswählbar, Rest endpoint etc.
+## Current
 - [ ] Installiere eine Autokorrektur Modell und lasse nach der Extraktion über den Text laufen
 - [ ] Mache eine Handschrift TODOs to Markdown Service Implementation
 - [ ] Rest Controller und Angular GUI um eine Handschrift Datei hochzuladen und den Text als Markdown anzuzeigen
@@ -12,9 +10,14 @@ TODOs
 - [ ] Steige auf r2dbc um, um echt reaktiv zu sein
 - [ ] Implementiere Correction Loop verbessertes Markdown
 - [ ] Update die Handschriften GUI Komponente um das Markdown zu verbessern
-- [ ] Implementiere ollama vorwärmen beim start 
+- [ ] Implementiere ollama vorwärmen beim start
+
+## Vielleicht
+- [ ] Installiere verschieden ollama modells für handschrift und mache sie im api-tester auswählbar, Rest endpoint etc.
 
 ## Erledigt
+- [x] nutze auch vast.ai und mache es konfigurierbar beim entwickeln, automatisch startbar beim entwicklen
+- [x] mache einen system prompt im ui access able und mappe die entsprechenden rest methoden
 - [x] Verbessere bei Stream das Stop Stream für einen echten Abbruch sorgt, jetzt geht in einen Endlos Loop
 - [x] Verbessere Error Handling im Api Tester z.B. für ollama läuft nicht
 - [x] Rest Controller und Angular GUI Komponenten um diese mit dem GUI zu testen

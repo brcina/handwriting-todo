@@ -6,13 +6,12 @@ spring:
   ai:
     retry:
       max-attempts: 1
-      backoff:
-        initial-interval: 1000
-        multiplier: 2
-        max-interval: 2000
     ollama:
       base-url: "${SPRING_AI_OLLAMA_BASE_URL:http://localhost:11434}"
       chat:
         options:
-          model: llama3.2-vision:11b
-          temperature: 0.7
+          model: qwen2.5vl:7b
+          timeout: 360s
+vast:
+  api:
+    token: "${VAST_API_TOKEN:}"

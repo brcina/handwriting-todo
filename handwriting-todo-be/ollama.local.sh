@@ -1,7 +1,7 @@
 #!/bin/bash
 
 COMMAND=${1:-help}
-MODEL="llama3.2-vision:11b"
+MODEL="qwen2.5vl:7b"
 
 case "$COMMAND" in
   run)

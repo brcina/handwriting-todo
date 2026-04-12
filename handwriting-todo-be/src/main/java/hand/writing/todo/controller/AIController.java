@@ -1,6 +1,7 @@
 package hand.writing.todo.controller;
 
 import hand.writing.todo.service.AIService;
+import hand.writing.todo.utils.Utils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.ai.content.Media;
 import org.springframework.core.io.ByteArrayResource;
@@ -18,6 +19,7 @@ import reactor.core.scheduler.Schedulers;
 
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -26,57 +28,61 @@ public class AIController {
     private final AIService aiService;
 
     @GetMapping("/ai/ask")
-    public Mono<Map<String, String>> ask(@RequestParam(value = "message", defaultValue = "Tell me a joke") String message) {
-        return Mono.fromCallable(() -> Map.of("answer", aiService.ask(message)))
+    public Mono<Map<String, String>> ask(
+            @RequestParam(value = "system") String system,
+            @RequestParam(value = "message") String message
+    ) {
+        return Mono.fromCallable(() -> Map.of("answer", aiService.ask(system, message)))
                 .subscribeOn(Schedulers.boundedElastic());
     }
 
     @GetMapping(value = "/ai/askStream", produces = MediaType.APPLICATION_NDJSON_VALUE)
-    public Flux<Map<String, String>> askStream(@RequestParam(value = "message", defaultValue = "Tell me a joke") String message) {
-        return aiService.askStream(message)
-                .map(r -> Map.of("answer", Objects.requireNonNull(r.getResult().getOutput().getText())));
+    public Flux<Map<String, String>> askStream(
+            @RequestParam(value = "system") String system,
+            @RequestParam(value = "message") String message
+    ) {
+        return aiService.askStream(system, message)
+                .map(r -> r.getResult().getOutput().getText())
+                .filter(Objects::nonNull)
+                .map(text -> Map.of("answer", text));
     }
 
     @PostMapping(value = "/ai/askAboutPicture", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public Mono<Map<String, String>> askAboutPicture(
+            @RequestPart("system") String system,
             @RequestPart("message") String message,
             @RequestPart("file") FilePart file) {
 
-        return readBytes(file)
+        return Utils.readBytes(file)
                 .flatMap(bytes -> {
                     Media media = new Media(
                             Objects.requireNonNull(file.headers().getContentType()),
                             new ByteArrayResource(bytes)
                     );
-                    return Mono.fromCallable(() -> aiService.askAboutPicture(message, media))
+                    return Mono.fromCallable(() -> aiService.ask(system, message, media))
                             .subscribeOn(Schedulers.boundedElastic());
                 })
-                .map(response -> Map.of("answer", Objects.requireNonNull(response.getResult().getOutput().getText())));
+                .map(answer -> Map.of("answer", answer));
     }
 
     @PostMapping(value = "/ai/askAboutPictureStream", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_NDJSON_VALUE)
     public Flux<Map<String, String>> askAboutPictureStream(
+            @RequestPart("system") String system,
             @RequestPart("message") String message,
             @RequestPart("file") FilePart file) {
 
-        return readBytes(file)
+        return Utils.readBytes(file)
                 .flatMapMany(bytes -> {
                     Media media = new Media(
                             Objects.requireNonNull(file.headers().getContentType()),
                             new ByteArrayResource(bytes)
                     );
-                    return aiService.askAboutPictureStream(message, media);
+                    return aiService.askStream(system, message, media);
                 })
-                .map(r -> Map.of("answer", Objects.requireNonNull(r.getResult().getOutput().getText())));
+                .map(r -> r.getResult().getOutput().getText())
+                .filter(Objects::nonNull)
+                .map(text -> Map.of("answer", text));
     }
 
-    private Mono<byte[]> readBytes(FilePart file) {
-        return DataBufferUtils.join(file.content())
-                .map(dataBuffer -> {
-                    byte[] bytes = new byte[dataBuffer.readableByteCount()];
-                    dataBuffer.read(bytes);
-                    DataBufferUtils.release(dataBuffer);
-                    return bytes;
-                });
-    }
+
 }

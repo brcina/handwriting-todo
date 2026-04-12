@@ -1,8 +1,11 @@
 package hand.writing.todo.service;
 
+import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
+import org.springframework.ai.chat.messages.SystemMessage;
 import org.springframework.ai.chat.messages.UserMessage;
+import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.content.Media;
@@ -11,6 +14,8 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 @Log
 @Service
@@ -18,30 +23,36 @@ import java.util.List;
 public class AIService {
     private final OllamaChatModel chatModel;
 
-    public String ask(String question) {
 
-        return chatModel.call(question);
+    public String ask(String system, String question) {
+        return ask(system, question, null);
     }
 
-    public Flux<ChatResponse> askStream(String question) {
-        Prompt prompt = new Prompt(new UserMessage(question));
+    public String ask(String system, String question, @Nullable  Media media) {
+        SystemMessage systemMessage = SystemMessage.builder().text(system).build();
+        var userMessageBuilder = UserMessage.builder().text(question);
+        if(media != null) {
+            userMessageBuilder.media(media);
+        }
+        var userMessage = userMessageBuilder.build();
+        return Objects.requireNonNull(
+                this.chatModel.call(new Prompt(List.of(systemMessage, userMessage))).getResult().getOutput().getText()
+        );
+    }
+
+    public Flux<ChatResponse> askStream(String system, String question) {
+        return askStream(system, question, null);
+    }
+
+    public Flux<ChatResponse> askStream(String system, String question, Media media) {
+        SystemMessage systemMessage = SystemMessage.builder().text(system).build();
+        var userMessageBuilder = UserMessage.builder().text(question);
+        if(media != null) {
+            userMessageBuilder.media(media);
+        }
+        var userMessage = userMessageBuilder.build();
+        Prompt prompt = new Prompt(List.of(systemMessage, userMessage));
         return chatModel.stream(prompt);
-    }
-
-    public ChatResponse askAboutPicture(String question, Media media) {
-        var userMessage = UserMessage.builder()
-                .text(question)
-                .media(List.of(media))
-                .build();
-        return this.chatModel.call(new Prompt(List.of(userMessage)));
-    }
-
-    public Flux<ChatResponse> askAboutPictureStream(String question, Media media) {
-        var userMessage = UserMessage.builder()
-                .text(question)
-                .media(List.of(media))
-                .build();
-        return this.chatModel.stream(new Prompt(List.of(userMessage)));
     }
 
 }

@@ -22,6 +22,7 @@ export class ApiTesterComponent {
   streaming = signal(false);
   elapsedMs = signal<number | null>(null);
   selectedFile: File | null = null;
+  system = 'You are a standup comedian';
   message = 'Tell me a joke';
   private abortController: AbortController | null = null;
   private timerStart = 0;
@@ -74,7 +75,7 @@ export class ApiTesterComponent {
 
   private sendGet() {
     this.http
-      .get<{answer: string}>(this.selected.url, { params: { message: this.message } })
+      .get<{answer: string}>(this.selected.url, { params: { system: this.system, message: this.message } })
       .subscribe({
         next: r => { this.response.set(r.answer); this.stopTimer(); },
         error: e => { this.response.set(`Error: ${e.message}`); this.stopTimer(); }
@@ -88,6 +89,7 @@ export class ApiTesterComponent {
       return;
     }
     const form = new FormData();
+    form.append('system', this.system);
     form.append('message', this.message);
     form.append('file', this.selectedFile);
     this.http
@@ -113,11 +115,12 @@ export class ApiTesterComponent {
         return;
       }
       const form = new FormData();
+      form.append('system', this.system);
       form.append('message', this.message);
       form.append('file', this.selectedFile);
       fetchPromise = fetch(this.selected.url, { method: 'POST', body: form, signal });
     } else {
-      const url = `${this.selected.url}?message=${encodeURIComponent(this.message)}`;
+      const url = `${this.selected.url}?system=${encodeURIComponent(this.system)}&message=${encodeURIComponent(this.message)}`;
       fetchPromise = fetch(url, { signal });
     }
 
