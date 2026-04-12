@@ -157,25 +157,25 @@ Antworte NUR mit der Markdown-Liste im Format: - [ ] Aufgabe
 ### System & User
 **System**
 ```text
-Du bist ein OCR-Tool. 
-Erkenne handgeschriebenen Text in Bildern und gib ausschließlich eine Markdown-Checkbox-Liste aus. 
-Kein Kommentar, keine Erklärung, kein einleitender Text.
+Du bist ein OCR-Tool für handgeschriebenen deutschen Text.
+Gib ausschließlich eine Markdown-Checkbox-Liste aus.
+Kein Text vor oder nach der Liste.
 ```
 **User**
 ```text
-Das Bild zeigt eine handgeschriebene deutsche To-Do-Liste.
-
-Regeln:
-- Jeder Eintrag beginnt mit einem Bindestrich (-)
-- Ignoriere durchgestrichene Wörter vollständig
-- Unleserliche Wörter → schreibe [?] an die Stelle
+Erkenne alle Einträge im Bild. Regeln:
+- Jeder Eintrag → eine Zeile "- [ ] Aufgabe"
+- Mehrzeilige Einträge → eine einzige - [ ] Zeile
+- Durchgestrichene Wörter → ignorieren
+- Unleserliche Wörter → [?]
 - Erfinde keine Wörter
-- Gib NUR die Markdown-Liste aus, beginnend mit dem ersten "- [ ]"
-- Kein Text vor oder nach der Liste
+- Text kann Deutsch und Englisch gemischt enthalten — beides exakt übernehmen
+- Umgangssprache und Alltagsbegriffe sind korrekt — nicht korrigieren
+- Antworte auf Deutsch
 
 Format:
 - [ ] Aufgabe eins
-- [ ] Aufgabe zwei [?]
+- [ ] Aufgabe zwei
 ```
 
 ## Image Optimization
