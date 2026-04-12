@@ -1,31 +1,30 @@
 TODOs
 =====
 
-## Current
-- [ ] Installiere eine Autokorrektur Modell und lasse nach der Extraktion über den Text laufen
-- [ ] Mache eine Handschrift TODOs to Markdown Service Implementation
-- [ ] Rest Controller und Angular GUI um eine Handschrift Datei hochzuladen und den Text als Markdown anzuzeigen
-- [ ] Performance implementiere optimierungen wie Bild Downscaling im FE
-- [ ] Performance implementiere Bild-Preprocessing (Kontrast + Binarisierung) im Backend bevor den call an Ollama
-- [ ] Steige auf r2dbc um, um echt reaktiv zu sein
-- [ ] Implementiere Correction Loop verbessertes Markdown
-- [ ] Update die Handschriften GUI Komponente um das Markdown zu verbessern
-- [ ] Implementiere ollama vorwärmen beim start
+## Aktuell
+- [ ] Autokorrektur-Modell integrieren und nach der Extraktion über den Text laufen lassen
+- [ ] Handschrift-TODOs-zu-Markdown-Service implementieren
+- [ ] REST-Controller und Angular-GUI zum Hochladen einer Handschrift-Datei und Anzeigen des Textes als Markdown
+- [ ] Performance: Bild-Downscaling im Frontend implementieren
+- [ ] Performance: Bild-Vorverarbeitung (Kontrast + Binarisierung) im Backend vor dem Ollama-Aufruf implementieren
+- [ ] Auf r2dbc umsteigen, um vollständig reaktiv zu sein
+- [ ] Correction-Loop für verbessertes Markdown implementieren
+- [ ] Handschriften-GUI-Komponente aktualisieren, um das Markdown nachträglich zu verbessern
+- [ ] Ollama beim Start vorwärmen
 
 ## Vielleicht
-- [ ] Installiere verschieden ollama modells für handschrift und mache sie im api-tester auswählbar, Rest endpoint etc.
+- [ ] Verschiedene Ollama-Modelle für Handschrift installieren und im API-Tester auswählbar machen (REST-Endpunkt etc.)
 
 ## Erledigt
-- [x] nutze auch vast.ai und mache es konfigurierbar beim entwickeln, automatisch startbar beim entwicklen
-- [x] mache einen system prompt im ui access able und mappe die entsprechenden rest methoden
-- [x] Verbessere bei Stream das Stop Stream für einen echten Abbruch sorgt, jetzt geht in einen Endlos Loop
-- [x] Verbessere Error Handling im Api Tester z.B. für ollama läuft nicht
-- [x] Rest Controller und Angular GUI Komponenten um diese mit dem GUI zu testen
-- [x] Projekt in docker-compose setup umwandeln
-- [x] Text und Bild Service implementation erstellen
-- [x] Ollama soweit zum Laufen kriegen, das ich es mit einem Service Implementation ansprechen kann
-- [x] Das Projekt nach git einchecken
-- [x] Build soweit fixen, das ich die Anwendung erstellen und laufen lassen kann, mit der Dummy Anwendung
-- [x] Spring Boot mit Main Klasse im BE Projekt anlegen, alle Dependencies für den Anfang, 
-      SqlLite, Ollama, Rest Web
-
+- [x] vast.ai integrieren und beim Entwickeln konfigurierbar sowie automatisch startbar machen
+- [x] System-Prompt im UI zugänglich machen und die entsprechenden REST-Methoden mappen
+- [x] Sicherstellen, dass Stop-Stream beim Streaming einen echten Abbruch auslöst (vorher: Endlos-Loop)
+- [x] Error-Handling im API-Tester verbessern (z. B. wenn Ollama nicht läuft)
+- [x] REST-Controller und Angular-GUI-Komponenten zum Testen mit der GUI erstellen
+- [x] Projekt auf Docker-Compose-Setup umstellen
+- [x] Text- und Bild-Service-Implementierung erstellen
+- [x] Ollama soweit zum Laufen bringen, dass es über eine Service-Implementierung ansprechbar ist
+- [x] Projekt in Git einchecken
+- [x] Build soweit fixen, dass die Anwendung erstellt und gestartet werden kann (Dummy-Anwendung)
+- [x] Spring Boot mit Main-Klasse im BE-Projekt anlegen, alle initialen Dependencies
+      (SQLite, Ollama, REST Web)
