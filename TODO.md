@@ -2,8 +2,6 @@ TODOs
 =====
 
 ## Aktuell
-- [ ] Autokorrektur-Modell integrieren und nach der Extraktion über den Text laufen lassen
-- [ ] Handschrift-TODOs-zu-Markdown-Service implementieren
 - [ ] REST-Controller und Angular-GUI zum Hochladen einer Handschrift-Datei und Anzeigen des Textes als Markdown
 - [ ] Performance: Bild-Downscaling im Frontend implementieren
 - [ ] Performance: Bild-Vorverarbeitung (Kontrast + Binarisierung) im Backend vor dem Ollama-Aufruf implementieren
@@ -11,11 +9,13 @@ TODOs
 - [ ] Correction-Loop für verbessertes Markdown implementieren
 - [ ] Handschriften-GUI-Komponente aktualisieren, um das Markdown nachträglich zu verbessern
 - [ ] Ollama beim Start vorwärmen
+- [ ] Autokorrektur-Modell integrieren und nach der Extraktion über den Text laufen lassen
 
 ## Vielleicht
 - [ ] Verschiedene Ollama-Modelle für Handschrift installieren und im API-Tester auswählbar machen (REST-Endpunkt etc.)
 
 ## Erledigt
+- [x] Handschrift-TODOs-zu-Markdown-Service implementieren
 - [x] vast.ai integrieren und beim Entwickeln konfigurierbar sowie automatisch startbar machen
 - [x] System-Prompt im UI zugänglich machen und die entsprechenden REST-Methoden mappen
 - [x] Sicherstellen, dass Stop-Stream beim Streaming einen echten Abbruch auslöst (vorher: Endlos-Loop)

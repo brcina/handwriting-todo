@@ -6,8 +6,10 @@ import org.hibernate.internal.log.SubSystemLogging;
 import org.junit.jupiter.api.Test;
 import org.springframework.ai.content.Media;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.util.MimeTypeUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -19,6 +21,8 @@ class AIServiceTest {
 
     @Autowired
     private AIService aiService;
+
+
 
     @Test
     void ask() {
@@ -39,9 +43,7 @@ class AIServiceTest {
         var chunks = aiService.askStream(system, question).collectList().block();
         //then
         assertThat(chunks).isNotEmpty();
-        var fullText = chunks.stream()
-                .map(r -> r.getResult().getOutput().getText())
-                .collect(java.util.stream.Collectors.joining());
+        var fullText = String.join("", chunks);
         log.info(fullText);
         assertThat(fullText).contains("penguin");
     }
@@ -71,9 +73,7 @@ class AIServiceTest {
         var chunks = aiService.askStream(system, question, media).collectList().block();
         // then
         assertThat(chunks).isNotEmpty();
-        var text = chunks.stream()
-                .map(r -> r.getResult().getOutput().getText())
-                .collect(java.util.stream.Collectors.joining());
+        var text = String.join("", chunks);
         log.info(text);
         assertThat(text).contains("alphabet");
     }

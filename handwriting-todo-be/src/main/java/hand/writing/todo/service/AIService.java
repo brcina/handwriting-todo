@@ -40,11 +40,11 @@ public class AIService {
         );
     }
 
-    public Flux<ChatResponse> askStream(String system, String question) {
+    public Flux<String> askStream(String system, String question) {
         return askStream(system, question, null);
     }
 
-    public Flux<ChatResponse> askStream(String system, String question, Media media) {
+    public Flux<String> askStream(String system, String question, Media media) {
         SystemMessage systemMessage = SystemMessage.builder().text(system).build();
         var userMessageBuilder = UserMessage.builder().text(question);
         if(media != null) {
@@ -52,7 +52,13 @@ public class AIService {
         }
         var userMessage = userMessageBuilder.build();
         Prompt prompt = new Prompt(List.of(systemMessage, userMessage));
-        return chatModel.stream(prompt);
+        return askStream(prompt);
+    }
+
+    public Flux<String> askStream(Prompt prompt) {
+        return chatModel.stream(prompt)
+                .map(r -> r.getResult().getOutput().getText())
+                .filter(Objects::nonNull);
     }
 
 }
