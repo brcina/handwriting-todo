@@ -54,7 +54,7 @@ case "$COMMAND" in
     echo "Creating instance from offer $OFFER_ID with image $IMAGE and model $MODEL..."
     RESULT=$(vastai create instance "$OFFER_ID" \
       --image "$IMAGE" \
-      --env "-p 11434:11434 -e OLLAMA_MODEL=\"$MODEL\"" \
+      --env "-p 11434:11434 -e OLLAMA_MODEL=$MODEL" \
       --onstart-cmd 'entrypoint.sh' \
       --disk "$DISK" --ssh --direct)
     echo "$RESULT"
