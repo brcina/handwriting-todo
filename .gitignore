@@ -13,3 +13,4 @@ handwriting-todo-be/src/main/resources/static/*
 /vast-config.env
 /handwriting-todo-be/vastai.env
 /handwriting-todo-be/test-output/
+/.claude/
