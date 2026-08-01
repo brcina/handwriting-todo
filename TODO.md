@@ -2,7 +2,6 @@ TODOs
 =====
 
 ## Aktuell
-- [ ] REST-Controller und Angular-GUI zum Hochladen einer Handschrift-Datei und Anzeigen des Textes als Markdown
 - [ ] Performance: Bild-Downscaling im Frontend implementieren
 - [ ] Performance: Bild-Vorverarbeitung (Kontrast + Binarisierung) im Backend vor dem Ollama-Aufruf implementieren
 - [ ] Auf r2dbc umsteigen, um vollständig reaktiv zu sein
@@ -15,6 +14,7 @@ TODOs
 - [ ] Verschiedene Ollama-Modelle für Handschrift installieren und im API-Tester auswählbar machen (REST-Endpunkt etc.)
 
 ## Erledigt
+- [x] REST-Controller und Angular-GUI zum Hochladen einer Handschrift-Datei und Anzeigen des Textes als Markdown
 - [x] Handschrift-TODOs-zu-Markdown-Service implementieren
 - [x] vast.ai integrieren und beim Entwickeln konfigurierbar sowie automatisch startbar machen
 - [x] System-Prompt im UI zugänglich machen und die entsprechenden REST-Methoden mappen
