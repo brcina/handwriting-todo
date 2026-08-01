@@ -1,13 +1,9 @@
-import { Component, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
-import {ApiTesterComponent} from './api-tester/api-tester';
+import { Component } from '@angular/core';
+import { HandwritingTodoComponent } from './handwriting-todo/handwriting-todo';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, ApiTesterComponent],
+  imports: [HandwritingTodoComponent],
   templateUrl: './app.html',
-  styleUrl: './app.css'
 })
-export class App {
-  protected readonly title = signal('handwriting-todo-fe');
-}
+export class App {}

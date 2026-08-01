@@ -2,7 +2,7 @@
   <div class="border-2 border-dashed border-orange-400 p-4 m-4 rounded-lg">
     <h3 class="text-lg font-bold mb-3">🛠 API Tester (Dev only)</h3>
 
-    <!-- Endpoint Auswahl -->
+    <!-- Endpoint selection -->
     <div class="mb-3">
       <label class="block text-sm mb-1">Endpoint</label>
       <select [(ngModel)]="selected" class="border rounded p-1 w-full">
@@ -31,7 +31,7 @@
     <!-- File Upload -->
     @if (selected.fileRequired) {
       <div class="mb-3">
-        <label class="block text-sm mb-1">Bild</label>
+        <label class="block text-sm mb-1">Image</label>
         <input type="file" accept="image/*" (change)="onFileChange($event)"/>
         @if (selectedFile) {
           <span class="text-xs text-green-600 ml-2">
