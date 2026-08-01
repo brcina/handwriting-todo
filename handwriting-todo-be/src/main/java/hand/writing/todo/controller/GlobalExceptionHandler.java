@@ -13,7 +13,6 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    // WebFlux: Verbindungsfehler zum AI-Backend (Ollama nicht erreichbar etc.)
     @ExceptionHandler({WebClientRequestException.class, ConnectException.class})
     public Mono<ResponseEntity<Map<String, String>>> handleConnectionException(Exception ex) {
         return Mono.just(ResponseEntity
