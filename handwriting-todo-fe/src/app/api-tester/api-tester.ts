@@ -1,6 +1,6 @@
-import {Component, isDevMode, signal} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
-import {FormsModule} from '@angular/forms';
+import { Component, isDevMode, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { ApiService } from '../api.service';
 
 interface Endpoint {
   label: string;
@@ -14,7 +14,7 @@ interface Endpoint {
   selector: 'app-api-tester',
   standalone: true,
   imports: [FormsModule],
-  templateUrl: './api-tester.html'
+  templateUrl: './api-tester.html',
 })
 export class ApiTesterComponent {
   isDev = isDevMode();
@@ -24,19 +24,18 @@ export class ApiTesterComponent {
   selectedFile: File | null = null;
   system = 'You are a standup comedian';
   message = 'Tell me a joke';
-  private abortController: AbortController | null = null;
   private timerStart = 0;
   private timerInterval: ReturnType<typeof setInterval> | null = null;
 
   endpoints: Endpoint[] = [
-    { label: 'Ask',                    method: 'GET',  url: '/api/ai/ask',                    stream: false, fileRequired: false },
-    { label: 'Ask Stream',             method: 'GET',  url: '/api/ai/askStream',              stream: true,  fileRequired: false },
-    { label: 'Ask About Picture',      method: 'POST', url: '/api/ai/askAboutPicture',        stream: false, fileRequired: true  },
-    { label: 'Ask About Picture Stream', method: 'POST', url: '/api/ai/askAboutPictureStream', stream: true,  fileRequired: true  },
+    { label: 'Ask',                       method: 'GET',  url: '/api/ai/ask',                    stream: false, fileRequired: false },
+    { label: 'Ask Stream',                method: 'GET',  url: '/api/ai/askStream',              stream: true,  fileRequired: false },
+    { label: 'Ask About Picture',         method: 'POST', url: '/api/ai/askAboutPicture',        stream: false, fileRequired: true  },
+    { label: 'Ask About Picture Stream',  method: 'POST', url: '/api/ai/askAboutPictureStream',  stream: true,  fileRequired: true  },
   ];
   selected = this.endpoints[0];
 
-  constructor(private http: HttpClient) {}
+  constructor(private api: ApiService) {}
 
   private startTimer() {
     this.timerStart = performance.now();
@@ -74,17 +73,15 @@ export class ApiTesterComponent {
   }
 
   private sendGet() {
-    this.http
-      .get<{answer: string}>(this.selected.url, { params: { system: this.system, message: this.message } })
-      .subscribe({
-        next: r => { this.response.set(r.answer); this.stopTimer(); },
-        error: e => { this.response.set(`Error: ${e.message}`); this.stopTimer(); }
-      });
+    this.api
+      .get<{ answer: string }>(this.selected.url, { system: this.system, message: this.message })
+      .then(r => { this.response.set(r.answer); this.stopTimer(); })
+      .catch(e => { this.response.set(`Error: ${e.message}`); this.stopTimer(); });
   }
 
   private sendPost() {
     if (!this.selectedFile) {
-      this.response.set('Error: Bitte eine Datei auswählen.');
+      this.response.set('Error: Please select a file.');
       this.stopTimer();
       return;
     }
@@ -92,24 +89,18 @@ export class ApiTesterComponent {
     form.append('system', this.system);
     form.append('message', this.message);
     form.append('file', this.selectedFile);
-    this.http
-      .post<{answer: string}>(this.selected.url, form)
-      .subscribe({
-        next: r => { this.response.set(r.answer); this.stopTimer(); },
-        error: e => { this.response.set(`Error: ${e.message}`); this.stopTimer(); }
-      });
+    this.api
+      .post<{ answer: string }>(this.selected.url, form)
+      .then(r => { this.response.set(r.answer); this.stopTimer(); })
+      .catch(e => { this.response.set(`Error: ${e.message}`); this.stopTimer(); });
   }
 
   private startStream() {
     this.streaming.set(true);
-    this.abortController = new AbortController();
-    const signal = this.abortController.signal;
-
-    let fetchPromise: Promise<Response>;
 
     if (this.selected.fileRequired) {
       if (!this.selectedFile) {
-        this.response.set('Error: Bitte eine Datei auswählen.');
+        this.response.set('Error: Please select a file.');
         this.streaming.set(false);
         this.stopTimer();
         return;
@@ -118,53 +109,26 @@ export class ApiTesterComponent {
       form.append('system', this.system);
       form.append('message', this.message);
       form.append('file', this.selectedFile);
-      fetchPromise = fetch(this.selected.url, { method: 'POST', body: form, signal });
+      this.api.startStream(
+        this.selected.url,
+        { body: form },
+        chunk => this.response.update(r => r + chunk),
+        () => { this.streaming.set(false); this.stopTimer(); },
+        err => { this.response.set(`Error: ${err}`); this.streaming.set(false); this.stopTimer(); },
+      );
     } else {
-      const url = `${this.selected.url}?system=${encodeURIComponent(this.system)}&message=${encodeURIComponent(this.message)}`;
-      fetchPromise = fetch(url, { signal });
+      this.api.startStream(
+        this.selected.url,
+        { params: { system: this.system, message: this.message } },
+        chunk => this.response.update(r => r + chunk),
+        () => { this.streaming.set(false); this.stopTimer(); },
+        err => { this.response.set(`Error: ${err}`); this.streaming.set(false); this.stopTimer(); },
+      );
     }
-
-    fetchPromise
-      .then(async res => {
-        if (!res.ok) {
-          const err = await res.json().catch(() => ({ error: res.statusText }));
-          this.response.set(`Error ${res.status}: ${err.error ?? res.statusText}`);
-          this.streaming.set(false);
-          this.stopTimer();
-          return;
-        }
-        const reader = res.body!.getReader();
-        const decoder = new TextDecoder();
-        let buffer = '';
-        const read = () => reader.read().then(({ done, value }) => {
-          if (done) { this.streaming.set(false); this.stopTimer(); return; }
-          buffer += decoder.decode(value, { stream: true });
-          const lines = buffer.split('\n');
-          buffer = lines.pop() ?? '';
-          for (const line of lines) {
-            if (!line.trim()) continue;
-            try {
-              const chunk = JSON.parse(line);
-              this.response.update(r => r + chunk.answer);
-            } catch {
-              this.response.update(r => r + line);
-            }
-          }
-          read();
-        });
-        read();
-      })
-      .catch(e => {
-        if (e.name === 'AbortError') return;
-        this.response.set(`Error: ${e.message}`);
-        this.streaming.set(false);
-        this.stopTimer();
-      });
   }
 
   stopStream() {
-    this.abortController?.abort();
-    this.abortController = null;
+    this.api.stopStream();
     this.streaming.set(false);
     this.stopTimer();
   }
