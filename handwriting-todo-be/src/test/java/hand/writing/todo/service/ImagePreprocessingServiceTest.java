@@ -1,5 +1,6 @@
 package hand.writing.todo.service;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
 import reactor.core.publisher.Mono;
@@ -20,9 +21,28 @@ class ImagePreprocessingServiceTest {
     private final ImagePreprocessingService service = new ImagePreprocessingService();
 
     @Test
-    void preprocess_downscalesGrayscalesAndShrinksPayload() throws IOException {
+    @DisplayName("Beispiel für eine konvertierung mit einem Bild was falsch herum liegt, und zu hell ist")
+    void preprocess_downscalesGrayscalesAndShrinksPayload_badPic() throws IOException {
         // given
-        String imageName = "todo-010426-optimized.jpg";
+        String imageName = "todo-030826.jpg";
+        byte[] original = readFixture(imageName);
+
+        // when
+        byte[] result = Mono.from(service.preprocess(original)).block();
+
+        // then
+        BufferedImage image = ImageIO.read(new ByteArrayInputStream(result));
+        assertThat(image).isNotNull();
+        assertThat(Math.max(image.getWidth(), image.getHeight())).isLessThanOrEqualTo(1024);
+        assertThat(result.length).isLessThan(original.length);
+        writeResult(imageName, result);
+    }
+
+    @Test
+    @DisplayName("Beispiel für eine konvertierung mit einem Bild, was besser ist")
+    void preprocess_downscalesGrayscalesAndShrinksPayload_betterPic() throws IOException {
+        // given
+        String imageName = "todo-120426.jpg";
         byte[] original = readFixture(imageName);
 
         // when
