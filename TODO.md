@@ -2,8 +2,6 @@ TODOs
 =====
 
 ## Aktuell
-- [ ] Performance: Bild-Downscaling im Frontend implementieren
-- [ ] Performance: Bild-Vorverarbeitung (Kontrast + Binarisierung) im Backend vor dem Ollama-Aufruf implementieren
 - [ ] Auf r2dbc umsteigen, um vollständig reaktiv zu sein
 - [ ] Correction-Loop für verbessertes Markdown implementieren
 - [ ] Handschriften-GUI-Komponente aktualisieren, um das Markdown nachträglich zu verbessern
@@ -12,8 +10,12 @@ TODOs
 
 ## Vielleicht
 - [ ] Verschiedene Ollama-Modelle für Handschrift installieren und im API-Tester auswählbar machen (REST-Endpunkt etc.)
+- [ ] EXIF-Auto-Rotation im Backend berücksichtigen (aktuell nicht abgedeckt, Risiko bei hochkant fotografierten Zetteln) — Kandidat: Thumbnailator
+- [ ] Deskew (Schräglage-Korrektur) für schräg fotografierte Zettel implementieren — Kandidat: OpenCV
+- [ ] Auto-Crop auf den Zettel/das Dokument implementieren (Kantenerkennung/Perspektivkorrektur) — Kandidat: OpenCV
 
 ## Erledigt
+- [x] Performance: Bild-Downscaling (1024px) und Bild-Vorverarbeitung (Kontrast + Binarisierung) im Backend vor dem Ollama-Aufruf implementieren
 - [x] REST-Controller und Angular-GUI zum Hochladen einer Handschrift-Datei und Anzeigen des Textes als Markdown
 - [x] Handschrift-TODOs-zu-Markdown-Service implementieren
 - [x] vast.ai integrieren und beim Entwickeln konfigurierbar sowie automatisch startbar machen

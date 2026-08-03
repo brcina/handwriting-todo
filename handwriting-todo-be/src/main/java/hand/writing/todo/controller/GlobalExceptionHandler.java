@@ -20,6 +20,13 @@ public class GlobalExceptionHandler {
                 .body(Map.of("error", "AI service not reachable: " + ex.getMessage())));
     }
 
+    @ExceptionHandler(IllegalArgumentException.class)
+    public Mono<ResponseEntity<Map<String, String>>> handleIllegalArgumentException(IllegalArgumentException ex) {
+        return Mono.just(ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(Map.of("error", ex.getMessage())));
+    }
+
     @ExceptionHandler(Exception.class)
     public Mono<ResponseEntity<Map<String, String>>> handleGenericException(Exception ex) {
         return Mono.just(ResponseEntity

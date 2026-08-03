@@ -15,3 +15,6 @@ spring:
 vast:
   api:
     token: "${VAST_API_TOKEN:}"
+handwriting:
+  image:
+    max-dimension: 1024
