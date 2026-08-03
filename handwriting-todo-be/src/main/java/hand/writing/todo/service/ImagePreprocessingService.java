@@ -24,7 +24,6 @@ import java.util.Iterator;
 public class ImagePreprocessingService {
 
     private static final float JPEG_QUALITY = 0.8f;
-    private static final int THRESHOLD = 128;
 
     @Value("${handwriting.image.max-dimension:1024}")
     private int maxDimension = 1024;
@@ -40,7 +39,7 @@ public class ImagePreprocessingService {
             throw new IllegalArgumentException("Unsupported or corrupt image format");
         }
         BufferedImage gray = resizeAndGrayscale(source);
-        normalizeAndThreshold(gray);
+        binarize(gray);
         return encodeJpeg(gray);
     }
 
@@ -66,23 +65,59 @@ public class ImagePreprocessingService {
         return target;
     }
 
-    private void normalizeAndThreshold(BufferedImage gray) {
+    /**
+     * Binarizes via Otsu's method: the split threshold is derived from this image's own
+     * histogram instead of a fixed value, so overall brightness (e.g. an overexposed photo)
+     * doesn't wash out faint strokes the way a fixed-percentage threshold would.
+     */
+    private void binarize(BufferedImage gray) {
         byte[] pixels = ((DataBufferByte) gray.getRaster().getDataBuffer()).getData();
-
-        int min = 255;
-        int max = 0;
-        for (byte pixel : pixels) {
-            int value = pixel & 0xFF;
-            if (value < min) min = value;
-            if (value > max) max = value;
-        }
-
-        boolean flat = max == min;
+        int threshold = otsuThreshold(pixels);
         for (int i = 0; i < pixels.length; i++) {
             int value = pixels[i] & 0xFF;
-            int stretched = flat ? value : (value - min) * 255 / (max - min);
-            pixels[i] = (byte) (stretched >= THRESHOLD ? 255 : 0);
+            pixels[i] = (byte) (value > threshold ? 255 : 0);
         }
+    }
+
+    private int otsuThreshold(byte[] pixels) {
+        int[] histogram = new int[256];
+        for (byte pixel : pixels) {
+            histogram[pixel & 0xFF]++;
+        }
+
+        int total = pixels.length;
+        long sumAll = 0;
+        for (int i = 0; i < 256; i++) {
+            sumAll += (long) i * histogram[i];
+        }
+
+        long sumBackground = 0;
+        int weightBackground = 0;
+        double maxVariance = -1;
+        int bestThreshold = 128;
+
+        for (int t = 0; t < 256; t++) {
+            weightBackground += histogram[t];
+            if (weightBackground == 0) {
+                continue;
+            }
+            int weightForeground = total - weightBackground;
+            if (weightForeground == 0) {
+                break;
+            }
+
+            sumBackground += (long) t * histogram[t];
+            double meanBackground = (double) sumBackground / weightBackground;
+            double meanForeground = (double) (sumAll - sumBackground) / weightForeground;
+            double meanDiff = meanBackground - meanForeground;
+            double betweenVariance = (double) weightBackground * weightForeground * meanDiff * meanDiff;
+
+            if (betweenVariance > maxVariance) {
+                maxVariance = betweenVariance;
+                bestThreshold = t;
+            }
+        }
+        return bestThreshold;
     }
 
     private byte[] encodeJpeg(BufferedImage image) throws IOException {

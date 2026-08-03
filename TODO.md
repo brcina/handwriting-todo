@@ -13,6 +13,7 @@ TODOs
 - [ ] EXIF-Auto-Rotation im Backend berücksichtigen (aktuell nicht abgedeckt, Risiko bei hochkant fotografierten Zetteln) — Kandidat: Thumbnailator
 - [ ] Deskew (Schräglage-Korrektur) für schräg fotografierte Zettel implementieren — Kandidat: OpenCV
 - [ ] Auto-Crop auf den Zettel/das Dokument implementieren (Kantenerkennung/Perspektivkorrektur) — Kandidat: OpenCV
+- [ ] Adaptives/lokales Thresholding statt globalem Otsu-Threshold bei der Binarisierung (Risiko: Text verschwindet bei ungleichmäßiger Beleuchtung/Schattenverlauf innerhalb eines Fotos) — Kandidat: Sauvola
 
 ## Erledigt
 - [x] Performance: Bild-Downscaling (1024px) und Bild-Vorverarbeitung (Kontrast + Binarisierung) im Backend vor dem Ollama-Aufruf implementieren
