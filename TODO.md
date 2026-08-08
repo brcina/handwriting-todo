@@ -2,7 +2,6 @@ TODOs
 =====
 
 ## Aktuell
-- [ ] Auf image magic umsteigen, schnelle Lösung, das Ergebnis jetzt mit iamge processor ist zu schlecht
 - [ ] Auf r2dbc umsteigen, um vollständig reaktiv zu sein
 - [ ] Correction-Loop für verbessertes Markdown implementieren
 - [ ] Handschriften-GUI-Komponente aktualisieren, um das Markdown nachträglich zu verbessern
@@ -13,6 +12,7 @@ TODOs
 - [ ] Verschiedene Ollama-Modelle für Handschrift installieren und im API-Tester auswählbar machen (REST-Endpunkt etc.)
 
 ## Erledigt
+- [x] Auf image magic umsteigen, schnelle Lösung, das Ergebnis jetzt mit iamge processor ist zu schlecht
 - [x] Performance: Bild-Downscaling (1024px) und Bild-Vorverarbeitung (Kontrast + Binarisierung) im Backend vor dem Ollama-Aufruf implementieren
 - [x] REST-Controller und Angular-GUI zum Hochladen einer Handschrift-Datei und Anzeigen des Textes als Markdown
 - [x] Handschrift-TODOs-zu-Markdown-Service implementieren
