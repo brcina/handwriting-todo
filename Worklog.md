@@ -5,6 +5,7 @@ Eine kleine Übersicht wie viel Stunden ich in das Projekt investiert habe
 
 | Tag        | Stunden |
 |------------|--------:|
+| 08.08.2026 |      4h |
 | 01.08.2026 |      5h |
 | 13.04.2026 |      4h |
 | 04.04.2026 |      4h |
@@ -12,3 +13,4 @@ Eine kleine Übersicht wie viel Stunden ich in das Projekt investiert habe
 | 28.03.2026 |      6h |
 | 21.03.2026 |      6h |
 | 15.03.2026 |      3h |
+| **Gesamt** |  **34h** |
