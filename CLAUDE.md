@@ -18,7 +18,7 @@ handwriting-todo/
 
 ## Development commands
 
-**Prerequisites:** Node.js, Java 21, Ollama running locally
+**Prerequisites:** Node.js, Java 21, Ollama running locally, ImageMagick (`convert` binary on PATH)
 
 ```bash
 # Frontend (http://localhost:4200)
@@ -89,6 +89,14 @@ All controllers are under the `/api` base path (configured in `application.yaml`
 convert input.jpg -auto-orient -colorspace Gray -resize 1500x1500 -normalize -quality 80 -threshold 50% output-optimized.jpg
 ```
 Optimized images go in `src/test/resources/` for integration tests.
+
+This manual command (fixed 50% threshold) is only for hand-preparing test
+fixtures. The runtime pipeline in `ImagePreprocessingService` shells out to
+`convert` for `-auto-orient` + grayscale + resize only (the installed
+ImageMagick build has no `-auto-threshold` support), then binarizes in Java
+via Otsu's method, so the split threshold adapts to each photo's own
+histogram instead of washing out faint strokes on overexposed photos the
+way a fixed threshold would.
 
 ### Frontend (Angular 21, standalone components)
 

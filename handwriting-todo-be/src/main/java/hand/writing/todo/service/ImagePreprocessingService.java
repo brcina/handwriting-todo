@@ -10,20 +10,21 @@ import javax.imageio.ImageIO;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import javax.imageio.stream.MemoryCacheImageOutputStream;
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Iterator;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class ImagePreprocessingService {
 
-    private static final float JPEG_QUALITY = 0.8f;
+    private static final long CONVERT_TIMEOUT_SECONDS = 30;
+    private static final float JPEG_QUALITY = 0.5f;
 
     @Value("${handwriting.image.max-dimension:1024}")
     private int maxDimension = 1024;
@@ -33,36 +34,61 @@ public class ImagePreprocessingService {
                 .subscribeOn(Schedulers.boundedElastic());
     }
 
-    private byte[] doPreprocess(byte[] original) throws IOException {
-        BufferedImage source = ImageIO.read(new ByteArrayInputStream(original));
-        if (source == null) {
-            throw new IllegalArgumentException("Unsupported or corrupt image format");
-        }
-        BufferedImage gray = resizeAndGrayscale(source);
+    /**
+     * ImageMagick handles the EXIF auto-orient, grayscale conversion and downscaling
+     * (all things the plain JDK/ImageIO stack can't do, or can't do well). Binarization
+     * stays in Java via Otsu's method: this ImageMagick build has no -auto-threshold
+     * support, and a fixed threshold washes out faint strokes on overexposed photos.
+     */
+    private byte[] doPreprocess(byte[] original) throws IOException, InterruptedException {
+        byte[] grayscale = runConvert(original);
+        BufferedImage gray = readGray(grayscale);
         binarize(gray);
         return encodeJpeg(gray);
     }
 
-    private BufferedImage resizeAndGrayscale(BufferedImage source) {
-        int width = source.getWidth();
-        int height = source.getHeight();
-        double scale = Math.min(1.0, maxDimension / (double) Math.max(width, height));
-        int targetWidth = (int) Math.round(width * scale);
-        int targetHeight = (int) Math.round(height * scale);
-
-        BufferedImage target = new BufferedImage(targetWidth, targetHeight, BufferedImage.TYPE_BYTE_GRAY);
-        Graphics2D g = target.createGraphics();
+    private byte[] runConvert(byte[] original) throws IOException, InterruptedException {
+        Path input = Files.createTempFile("handwriting-input-", ".jpg");
+        Path output = Files.createTempFile("handwriting-output-", ".jpg");
         try {
-            g.setColor(Color.WHITE);
-            g.fillRect(0, 0, targetWidth, targetHeight);
-            g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
-            g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            g.drawImage(source, 0, 0, targetWidth, targetHeight, null);
+            Files.write(input, original);
+
+            ProcessBuilder builder = new ProcessBuilder(
+                    "convert",
+                    input.toString(),
+                    "-auto-orient",
+                    // Not required for Otsu's correctness (readGray() falls back to converting
+                    // color input), but keeps resize/encode down to 1 channel instead of 3.
+                    "-colorspace", "Gray",
+                    "-resize", maxDimension + "x" + maxDimension + ">",
+                    output.toString()
+            ).redirectErrorStream(true);
+
+            Process process = builder.start();
+            boolean finished = process.waitFor(CONVERT_TIMEOUT_SECONDS, TimeUnit.SECONDS);
+            if (!finished) {
+                process.destroyForcibly();
+                throw new IllegalArgumentException("Image preprocessing timed out");
+            }
+            if (process.exitValue() != 0) {
+                String errorOutput = new String(process.getInputStream().readAllBytes());
+                throw new IllegalArgumentException("Unsupported or corrupt image format: " + errorOutput.trim());
+            }
+            return Files.readAllBytes(output);
         } finally {
-            g.dispose();
+            Files.deleteIfExists(input);
+            Files.deleteIfExists(output);
         }
-        return target;
+    }
+
+    private BufferedImage readGray(byte[] grayscaleJpeg) throws IOException {
+        BufferedImage image = ImageIO.read(new ByteArrayInputStream(grayscaleJpeg));
+        if (image.getType() == BufferedImage.TYPE_BYTE_GRAY) {
+            return image;
+        }
+        BufferedImage gray = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_BYTE_GRAY);
+        gray.getGraphics().drawImage(image, 0, 0, null);
+        return gray;
     }
 
     /**

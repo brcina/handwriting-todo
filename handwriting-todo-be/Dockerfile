@@ -10,6 +10,7 @@ RUN ./gradlew :handwriting-todo-be:bootJar -PskipFrontend --no-daemon
 
 # Stage 2: Run
 FROM eclipse-temurin:21-jre-alpine
+RUN apk add --no-cache imagemagick
 WORKDIR /app
 COPY --from=build /workspace/handwriting-todo-be/build/libs/*.jar app.jar
 EXPOSE 8080

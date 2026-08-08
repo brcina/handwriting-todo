@@ -1,5 +1,7 @@
 package hand.writing.todo.service;
 
+import org.junit.jupiter.api.Assumptions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
@@ -19,6 +21,17 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 class ImagePreprocessingServiceTest {
 
     private final ImagePreprocessingService service = new ImagePreprocessingService();
+
+    @BeforeEach
+    void checkImageMagickAvailable() {
+        boolean available;
+        try {
+            available = new ProcessBuilder("convert", "-version").start().waitFor() == 0;
+        } catch (IOException | InterruptedException e) {
+            available = false;
+        }
+        Assumptions.assumeTrue(available, "ImageMagick 'convert' not found on PATH, skipping test");
+    }
 
     @Test
     @DisplayName("Beispiel für eine konvertierung mit einem Bild was falsch herum liegt, und zu hell ist")
