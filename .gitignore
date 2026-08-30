@@ -14,3 +14,5 @@ handwriting-todo-be/src/main/resources/static/*
 /handwriting-todo-be/vastai.env
 /handwriting-todo-be/test-output/
 /.claude/
+handwriting-todo-be/bin/
+handwriting-todo-be/.zed/

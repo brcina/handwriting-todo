@@ -8,6 +8,9 @@ TODOs
 - [ ] Correction-Loop für verbessertes Markdown implementieren
 - [ ] Das Modell erfindet, Wörter, Sätze, wenn es was nicht versteht wie kann man das berücksichtigen
 - [ ] Eine bessere sophisticated Way of Korrektur Loop z.B. das ist erfunden, ganzer Satz falsch etc.
+- [ ] Beim Testen festgestellt: Ollama übernimmt durchgestrichene Zeilen mit ins Markdown
+      (sollten als erledigt/entfernt erkannt und ausgelassen werden) und lässt umgekehrt
+      teils ganze Zeilen aus dem handschriftlichen TODO komplett weg
 - [ ] Ollama beim Start vorwärmen
 - [ ] Autokorrektur-Modell integrieren und nach der Extraktion über den Text laufen lassen
 
