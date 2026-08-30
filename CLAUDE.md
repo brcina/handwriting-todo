@@ -106,6 +106,16 @@ Single-page app with one component: `ApiTesterComponent` (`src/app/api-tester/`)
 
 Streaming endpoints (`/askStream`, `/askAboutPictureStream`, `/handwriting/convert`) return `application/x-ndjson`. Each line is a JSON object `{"answer": "<chunk>"}`. The frontend accumulates chunks directly into a signal.
 
+## Agent skills
+
+### Issue tracker
+
+Issues und Specs liegen als Markdown-Dateien unter `.scratch/` im Repo. Siehe `docs/agents/issue-tracker.md`.
+
+### Domain docs
+
+Single-context-Layout: `CONTEXT.md` + `docs/adr/` im Repo-Root. Siehe `docs/agents/domain.md`.
+
 ## Test style
 
 Tests are `@SpringBootTest` integration tests — they hit a real Ollama instance. No mocks.
