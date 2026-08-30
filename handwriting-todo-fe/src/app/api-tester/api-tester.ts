@@ -1,6 +1,7 @@
 import { Component, isDevMode, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../api.service';
+import { createElapsedTimer } from '../elapsed-timer';
 
 interface Endpoint {
   label: string;
@@ -20,12 +21,10 @@ export class ApiTesterComponent {
   isDev = isDevMode();
   response = signal('');
   streaming = signal(false);
-  elapsedMs = signal<number | null>(null);
+  timer = createElapsedTimer();
   selectedFile: File | null = null;
   system = 'You are a standup comedian';
   message = 'Tell me a joke';
-  private timerStart = 0;
-  private timerInterval: ReturnType<typeof setInterval> | null = null;
 
   endpoints: Endpoint[] = [
     { label: 'Ask',                       method: 'GET',  url: '/api/ai/ask',                    stream: false, fileRequired: false },
@@ -37,22 +36,6 @@ export class ApiTesterComponent {
 
   constructor(private api: ApiService) {}
 
-  private startTimer() {
-    this.timerStart = performance.now();
-    this.elapsedMs.set(0);
-    this.timerInterval = setInterval(() => {
-      this.elapsedMs.set(Math.round(performance.now() - this.timerStart));
-    }, 100);
-  }
-
-  private stopTimer() {
-    if (this.timerInterval) {
-      clearInterval(this.timerInterval);
-      this.timerInterval = null;
-    }
-    this.elapsedMs.set(Math.round(performance.now() - this.timerStart));
-  }
-
   onFileChange(event: Event) {
     const input = event.target as HTMLInputElement;
     this.selectedFile = input.files?.[0] ?? null;
@@ -61,7 +44,7 @@ export class ApiTesterComponent {
   send() {
     this.response.set('');
     this.stopStream();
-    this.startTimer();
+    this.timer.start();
 
     if (this.selected.stream) {
       this.startStream();
@@ -75,14 +58,14 @@ export class ApiTesterComponent {
   private sendGet() {
     this.api
       .get<{ answer: string }>(this.selected.url, { system: this.system, message: this.message })
-      .then(r => { this.response.set(r.answer); this.stopTimer(); })
-      .catch(e => { this.response.set(`Error: ${e.message}`); this.stopTimer(); });
+      .then(r => { this.response.set(r.answer); this.timer.stop(); })
+      .catch(e => { this.response.set(`Error: ${e.message}`); this.timer.stop(); });
   }
 
   private sendPost() {
     if (!this.selectedFile) {
       this.response.set('Error: Please select a file.');
-      this.stopTimer();
+      this.timer.stop();
       return;
     }
     const form = new FormData();
@@ -91,8 +74,8 @@ export class ApiTesterComponent {
     form.append('file', this.selectedFile);
     this.api
       .post<{ answer: string }>(this.selected.url, form)
-      .then(r => { this.response.set(r.answer); this.stopTimer(); })
-      .catch(e => { this.response.set(`Error: ${e.message}`); this.stopTimer(); });
+      .then(r => { this.response.set(r.answer); this.timer.stop(); })
+      .catch(e => { this.response.set(`Error: ${e.message}`); this.timer.stop(); });
   }
 
   private startStream() {
@@ -102,7 +85,7 @@ export class ApiTesterComponent {
       if (!this.selectedFile) {
         this.response.set('Error: Please select a file.');
         this.streaming.set(false);
-        this.stopTimer();
+        this.timer.stop();
         return;
       }
       const form = new FormData();
@@ -113,16 +96,16 @@ export class ApiTesterComponent {
         this.selected.url,
         { body: form },
         chunk => this.response.update(r => r + chunk),
-        () => { this.streaming.set(false); this.stopTimer(); },
-        err => { this.response.set(`Error: ${err}`); this.streaming.set(false); this.stopTimer(); },
+        () => { this.streaming.set(false); this.timer.stop(); },
+        err => { this.response.set(`Error: ${err}`); this.streaming.set(false); this.timer.stop(); },
       );
     } else {
       this.api.startStream(
         this.selected.url,
         { params: { system: this.system, message: this.message } },
         chunk => this.response.update(r => r + chunk),
-        () => { this.streaming.set(false); this.stopTimer(); },
-        err => { this.response.set(`Error: ${err}`); this.streaming.set(false); this.stopTimer(); },
+        () => { this.streaming.set(false); this.timer.stop(); },
+        err => { this.response.set(`Error: ${err}`); this.streaming.set(false); this.timer.stop(); },
       );
     }
   }
@@ -130,6 +113,6 @@ export class ApiTesterComponent {
   stopStream() {
     this.api.stopStream();
     this.streaming.set(false);
-    this.stopTimer();
+    this.timer.stop();
   }
 }

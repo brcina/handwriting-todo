@@ -1,21 +1,19 @@
 package hand.writing.todo.service;
 
-import jakarta.annotation.Nullable;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.java.Log;
+import java.util.List;
+import java.util.Objects;
+
 import org.springframework.ai.chat.messages.SystemMessage;
 import org.springframework.ai.chat.messages.UserMessage;
-import org.springframework.ai.chat.model.ChatModel;
-import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.content.Media;
 import org.springframework.ai.ollama.OllamaChatModel;
 import org.springframework.stereotype.Service;
-import reactor.core.publisher.Flux;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import jakarta.annotation.Nullable;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.java.Log;
+import reactor.core.publisher.Flux;
 
 @Log
 @Service

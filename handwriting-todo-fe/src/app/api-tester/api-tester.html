@@ -61,9 +61,9 @@
     </div>
 
     <!-- Timer -->
-    @if (elapsedMs() !== null) {
+    @if (timer.elapsedMs() !== null) {
       <div class="text-xs text-gray-400 mb-1">
-        {{ elapsedMs() }} ms
+        {{ timer.elapsedMs() }} ms
       </div>
     }
 

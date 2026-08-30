@@ -2,6 +2,7 @@ import { Component, computed, isDevMode, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../api.service';
 import { ApiTesterComponent } from '../api-tester/api-tester';
+import { createElapsedTimer } from '../elapsed-timer';
 
 type ViewState = 'idle' | 'loading' | 'view' | 'edit';
 
@@ -27,28 +28,9 @@ export class HandwritingTodoComponent {
   checked = signal<Set<number>>(new Set());
   showDevTools = signal(false);
   todos = computed(() => parseTodos(this.rawMarkdown()));
-  elapsedMs = signal<number | null>(null);
-  private timerStart = 0;
-  private timerInterval: ReturnType<typeof setInterval> | null = null;
+  timer = createElapsedTimer();
 
   constructor(private api: ApiService) {}
-
-  private startTimer() {
-    this.timerStart = performance.now();
-    this.elapsedMs.set(0);
-    this.timerInterval = setInterval(
-      () => this.elapsedMs.set(Math.round(performance.now() - this.timerStart)),
-      100,
-    );
-  }
-
-  private stopTimer() {
-    if (this.timerInterval) {
-      clearInterval(this.timerInterval);
-      this.timerInterval = null;
-    }
-    this.elapsedMs.set(Math.round(performance.now() - this.timerStart));
-  }
 
   onDragOver(event: DragEvent) {
     event.preventDefault();
@@ -70,7 +52,7 @@ export class HandwritingTodoComponent {
     this.error.set('');
     this.checked.set(new Set());
     this.state.set('loading');
-    this.startTimer();
+    this.timer.start();
 
     const form = new FormData();
     form.append('file', file);
@@ -79,14 +61,14 @@ export class HandwritingTodoComponent {
       '/api/handwriting/convert',
       { body: form },
       chunk => this.rawMarkdown.update(r => r + chunk),
-      () => { this.stopTimer(); this.state.set('view'); },
-      err => { this.stopTimer(); this.error.set(err); this.state.set('idle'); },
+      () => { this.timer.stop(); this.state.set('view'); },
+      err => { this.timer.stop(); this.error.set(err); this.state.set('idle'); },
     );
   }
 
   stopConversion() {
     this.api.stopStream();
-    this.stopTimer();
+    this.timer.stop();
     this.state.set(this.rawMarkdown() ? 'view' : 'idle');
   }
 
